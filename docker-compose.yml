@@ -1,0 +1,14 @@
+key-master:
+  build: .
+  links:
+   - dynamodb
+  ports:
+    - "3000:3000"
+  volumes:
+    - .:/usr/src/app/
+  entrypoint: /usr/src/app/node_modules/nodemon/bin/nodemon.js -L --ignore node_modules/ --ignore public/ --ignore .tmp/ /usr/src/app/app.js
+dynamodb:
+  image: fitz/dynamodb-local
+  ports:
+  - "8000:8000"
+  command: fitz/dynamodb-local -sharedDb
