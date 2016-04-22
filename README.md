@@ -43,10 +43,10 @@ fi
 
 1. 直接在命令行里面 `TASK=DEV docker-compose up` (env variable仅仅对当前process有效)
 2. 在Makefile里面
-  ```javascript
+```javascript
   make test
-   TASK=DEV docker-compose up
-  ```
+    TASK=DEV docker-compose up
+```
 
 [文档](https://github.com/docker/compose/blob/ea8cc1c3dc47c9ed3bff56c5a8d99175b57af650/docs/compose-file.md#variable-substitution)
 
