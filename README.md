@@ -40,6 +40,7 @@ fi
 ```
 
 最关键的是docker-compose.yml里面${TASK}这个env variable在哪里定义的:
+
 1. 直接在命令行里面 `TASK=DEV docker-compose up` (env variable仅仅对当前process有效)
 2. 在Makefile里面
   ```javascript
@@ -56,7 +57,7 @@ fi
 test: build_image
 	docker run -it --rm --entrypoint=/usr/src/app/run-test.sh ${IMAGE}:${GIT_HASH}
 ```
-OR
+or
 
 ```javascript
 docker build -t myimage .
@@ -76,7 +77,11 @@ exec /usr/src/app/node_modules/mocha/bin/_mocha tests/**/*.test.js -R spec
 
 ### Koa.js
 
-Koa简单的来说就是express+generator,下面这个例子里,每个middleware先按照顺序被调用,当碰到`yield next`的时候，则停下来当前的middleware去执行下一个middleware,等下一个middleware执行完了之后再返回.所以这里xResponseTime中断自己然后调用consoleLogger,consoleLogger又中断自己调用最后一个middleware,然后返回consoleLogger,完成后返回xResponseTime.最后记录下来的时间consoleLogger可能花了2ms,xResponseTime可能花了5ms.
+Koa简单的来说就是express+generator.
+
+下面这个例子里,每个middleware先按照顺序被调用,当碰到`yield next`的时候，则停下来当前的middleware去执行下一个middleware,等下一个middleware执行完了之后再返回.
+
+所以这里xResponseTime中断自己然后调用consoleLogger,consoleLogger又中断自己调用最后一个middleware,然后返回consoleLogger,完成后返回xResponseTime.最后记录下来的时间consoleLogger可能花了2ms,xResponseTime可能花了5ms.
 
 ```javascript
 var koa = require('koa');
