@@ -109,3 +109,46 @@ app.use(function *(){
 
 app.listen(3000);
 ```
+
+### Makefile Update
+
+这个修改过的Makefile比目前项目中的更简洁:
+
+1. install step里install的内容通过volumes在build_image或run step里存在
+2. test step可以直接搞个-it模式的node:5 container直接run test,同样,因为之前有build_image step,所以所有需要的东西都通过volumes的保存而存在了
+
+```javascript
+IMAGE=bunchballdev/keymaster
+GIT_HASH=$(shell git rev-parse --short HEAD)
+
+default: tag
+
+clean:
+	echo "clean"
+
+prep:
+	docker pull bunchballdev/node:5
+
+install: clean
+	docker run -it --rm --name install -v `pwd`:/usr/src/app -w /usr/src/app node:5 npm install
+
+build_image: install
+	docker build --no-cache -t $(IMAGE):$(GIT_HASH) .
+
+test: build_image
+	docker run -it --rm --name install -v `pwd`:/usr/src/app -w /usr/src/app node:5 /usr/src/app/node_modules/mocha/bin/_mocha tests/**/*.test.js -R spec
+
+tag: test
+	docker tag -f $(IMAGE):$(GIT_HASH) $(IMAGE):latest
+
+version:
+	git log -n 1 >> BUILD-VERSION.txt
+
+push: test version tag
+	docker push $(IMAGE):$(GIT_HASH)
+	docker push $(IMAGE):latest
+
+run: install
+	docker-compose down
+	docker-compose up
+```
